@@ -63,7 +63,11 @@ function App(){
 
     $("#espresso-menu-list").addEventListener("click", (e) => {
         if(e.target.classList.contains('menu-edit-button')) {
+<<<<<<< HEAD
             updateMenuName(e);
+=======
+            updateMenuName();
+>>>>>>> 20de6750046306fe621e575c0c7de5ae8c919fc6
         }
 
         if(e.target.classList.contains('menu-remove-button')){
