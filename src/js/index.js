@@ -82,5 +82,4 @@ function App(){
 
     $('#espresso-menu-submit-button').addEventListener('click', addMenuName);
 }
-
 new App();
