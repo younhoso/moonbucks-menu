@@ -11,20 +11,30 @@
 // - [x] 모달창에서 신규메뉴명을 입력 받고, 확인버튼을 누르면 메뉴가 수정된다.
 
 // TODO 메뉴 삭제
-// - [] 메뉴 삭제 버튼 클릭 이벤트를 받고, 메뉴 삭제 컨펌 모달창이 뜬다.
-// - [] 확인 버튼을 클릭하면 메뉴가 삭제된다.
-// - [] 총 메뉴 갯수를 count하여 상단에 보여준다.
-// - 추가되는 메뉴의 마크업은 `<ul></ul>`안에 삽입해야 한다.
+// - [x] 메뉴 삭제 버튼 클릭 이벤트를 받고, 메뉴 삭제 컨펌 모달창이 뜬다.
+// - [x] 확인 버튼을 클릭하면 메뉴가 삭제된다.
+// - [x] 총 메뉴 갯수를 count하여 상단에 보여준다.
 
 const $ = element => document.querySelector(element);
 
 function App(){
+    const updateMenuCount = () => {
+        const mentCount = $('#espresso-menu-list').querySelectorAll('li').length;
+        $('.menu-count').innerText = `총 ${mentCount}개`;
+    };
 
     $("#espresso-menu-list").addEventListener("click", (e) => {
         if(e.target.classList.contains('menu-edit-button')) {
             const $menuName = e.target.closest('li').querySelector('.menu-name');
             const updateedMenuName = prompt('메뉴명을 수정하세요', $menuName.innerText);
             $menuName.innerText = updateedMenuName;
+        }
+
+        if(e.target.classList.contains('menu-remove-button')){
+            if(confirm('정말 삭제하시겠습니까?')){
+                e.target.closest('li').remove();
+                updateMenuCount();
+            }
         }
     });
 
@@ -53,8 +63,7 @@ function App(){
 
         $('#espresso-menu-list').insertAdjacentHTML('beforeend', menuItemTemplate(menuName));
 
-        const mentCount = $('#espresso-menu-list').querySelectorAll('li').length;
-        $('.menu-count').innerText = `총 ${mentCount}개`;
+        updateMenuCount();
         $('#espresso-menu-name').value = '';
     };
 
