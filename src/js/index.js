@@ -7,15 +7,15 @@
 // - [x] localStorage에 있는 데이터를 읽어온다.
 
 // TODO 카테고리별 메뉴판 관리
-// - [] 에스프레소 메뉴판 관리
-// - [] 프라푸치노 메뉴판 관리
-// - [] 블렌디드 메뉴판 관리
-// - [] 티바나 메뉴판 관리
-// - [] 디저트 메뉴판 관리
+// - [x] 에스프레소 메뉴판 관리
+// - [x] 프라푸치노 메뉴판 관리
+// - [x] 블렌디드 메뉴판 관리
+// - [x] 티바나 메뉴판 관리
+// - [x] 디저트 메뉴판 관리
 
 // TODO 페이지 접근시 최초 데이터 Read & Rendering
-// - [] 최초로 로딩될때 localStorage에 에스프레소 메뉴를 읽어온다.
-// - [] 에스프레소 메뉴를 페이지에 그려준다.
+// - [x] 최초로 로딩될때 localStorage에 에스프레소 메뉴를 읽어온다.
+// - [x] 에스프레소 메뉴를 페이지에 그려준다.
 
 // TODO 품절 상태 관리
 // - [] 품절 상태인 경우를 보여줄 수 있게, 품절 버튼을 추가하고 sold-out class를 추가하여 상태를 변경한다.
@@ -58,25 +58,25 @@ function App(){
             </li>`
         }).join(''); //배열객체에 있는 li항목 들을 하나로 합쳐주는 join역할
 
-        $('#espresso-menu-list').innerHTML = template
+        $('#menu-list').innerHTML = template
         updateMenuCount();
     };
 
     const updateMenuCount = () => {
-        const mentCount = $('#espresso-menu-list').querySelectorAll('li').length;
+        const mentCount = $('#menu-list').querySelectorAll('li').length;
         $('.menu-count').innerText = `총 ${mentCount}개`;
     };
 
     const addMenuName = () => {
-        if($('#espresso-menu-name').value === ''){
+        if($('#menu-name').value === ''){
             alert('값을 입력해주세요.');
             return;
         }
-        const espressoMenuName = $('#espresso-menu-name').value;
-        this.menu[this.currentCategory].push({ name: espressoMenuName });
+        const menuName = $('#menu-name').value;
+        this.menu[this.currentCategory].push({ name: menuName });
         store.setLocalStorage(this.menu); //상태가 변하는 시졈에 localStorage에 데이터를 저장한다.
         render();
-        $('#espresso-menu-name').value = '';
+        $('#menu-name').value = '';
     };
 
     const updateMenuName = (e) => {
@@ -98,7 +98,7 @@ function App(){
         }
     }
 
-    $("#espresso-menu-list").addEventListener("click", (e) => {
+    $("#menu-list").addEventListener("click", (e) => {
         if(e.target.classList.contains('menu-edit-button')) {
             updateMenuName(e);
         }
@@ -108,21 +108,25 @@ function App(){
         }
     });
 
-    $('#espresso-menu-form').addEventListener('submit', (e) => {
+    $('#menu-form').addEventListener('submit', (e) => {
         e.preventDefault();
     });
 
-    $('#espresso-menu-name').addEventListener('keypress', (e) => {
+    $('#menu-name').addEventListener('keypress', (e) => {
         if(e.key !== 'Enter') return;
         addMenuName();
     });
 
-    $('#espresso-menu-submit-button').addEventListener('click', addMenuName);
+    $('#menu-submit-button').addEventListener('click', addMenuName);
 
     $('nav').addEventListener('click', (e) => {
         const isCategoryButton = e.target.classList.contains('cafe-category-name');
-        const categoryName = isCategoryButton && e.target.dataset.categoryName;
-        console.log(categoryName)
+        if(isCategoryButton){
+            const categoryName = e.target.dataset.categoryName;
+            this.currentCategory = categoryName;
+            $('#category-title').innerText = `${e.target.innerText} 메뉴 관리`;
+            render();
+        }
     });
 
     this.init = () => {
