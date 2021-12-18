@@ -4,7 +4,7 @@
 //  - [x] 메뉴를 추가할 때
 //  - [x] 메뉴를 수정할 때
 //  - [x] 메뉴를 삭제할 때
-// - [] localStorage에 있는 데이터를 읽어온다.
+// - [x] localStorage에 있는 데이터를 읽어온다.
 
 // TODO 카테고리별 메뉴판 관리
 // - [] 에스프레소 메뉴판 관리
@@ -27,16 +27,33 @@ const $ = element => document.querySelector(element);
 
 const store = {
     setLocalStorage(menu) {
-        localStorage.setItem('menu', JSON.stringify(menu));
+        localStorage.setItem("menu", JSON.stringify(menu));
     },
     getLocalStorage() {
-        localStorage.getItem('menu');
+        return JSON.parse(localStorage.getItem("menu"));
     }
 }
 
 function App(){
     // 상태를 변하는 데이터, 이 앱에서 변하는 것이 무엇인가 - 메뉴명
     this.menu = new Array();
+
+    const render = () => {
+        const template = this.menu.map((menuItem, idx) => {
+            return `<li data-menu-id="${idx}" class="menu-list-item d-flex items-center py-2">
+                <span class="w-100 pl-2 menu-name">${menuItem.name}</span>
+                <button type="button" class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button">
+                    수정
+                </button>
+                <button type="button" class="bg-gray-50 text-gray-500 text-sm menu-remove-button">
+                    삭제
+                </button>
+            </li>`
+        }).join(''); //배열객체에 있는 li항목 들을 하나로 합쳐주는 join역할
+
+        $('#espresso-menu-list').innerHTML = template
+        updateMenuCount();
+    };
 
     const updateMenuCount = () => {
         const mentCount = $('#espresso-menu-list').querySelectorAll('li').length;
@@ -51,20 +68,7 @@ function App(){
         const espressoMenuName = $('#espresso-menu-name').value;
         this.menu.push({ name: espressoMenuName });
         store.setLocalStorage(this.menu); //상태가 변하는 시졈에 localStorage에 데이터를 저장한다.
-        const template = this.menu.map((item, idx) => {
-            return `<li data-menu-id="${idx}" class="menu-list-item d-flex items-center py-2">
-                <span class="w-100 pl-2 menu-name">${item.name}</span>
-                <button type="button" class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button">
-                    수정
-                </button>
-                <button type="button" class="bg-gray-50 text-gray-500 text-sm menu-remove-button">
-                    삭제
-                </button>
-            </li>`
-        }).join(''); //배열객체에 있는 li항목 들을 하나로 합쳐주는 join역할
-
-        $('#espresso-menu-list').innerHTML = template
-        updateMenuCount();
+        render();
         $('#espresso-menu-name').value = '';
     };
 
@@ -107,5 +111,11 @@ function App(){
     });
 
     $('#espresso-menu-submit-button').addEventListener('click', addMenuName);
+
+    this.init = () => {
+        this.menu = store.getLocalStorage() ?? new Array();
+        render();
+    };
 }
-new App();
+const app = new App();
+app.init();
