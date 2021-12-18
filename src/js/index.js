@@ -36,10 +36,17 @@ const store = {
 
 function App(){
     // 상태를 변하는 데이터, 이 앱에서 변하는 것이 무엇인가 - 메뉴명
-    this.menu = new Array();
+    this.menu = {
+        espresso: new Array(),
+        frappuccino: new Array(),
+        blended: new Array(),
+        teavana: new Array(),
+        desert: new Array()
+    };
+    this.currentCategory = 'espresso';
 
     const render = () => {
-        const template = this.menu.map((menuItem, idx) => {
+        const template = this.menu[this.currentCategory].map((menuItem, idx) => {
             return `<li data-menu-id="${idx}" class="menu-list-item d-flex items-center py-2">
                 <span class="w-100 pl-2 menu-name">${menuItem.name}</span>
                 <button type="button" class="bg-gray-50 text-gray-500 text-sm mr-1 menu-edit-button">
@@ -66,7 +73,7 @@ function App(){
             return;
         }
         const espressoMenuName = $('#espresso-menu-name').value;
-        this.menu.push({ name: espressoMenuName });
+        this.menu[this.currentCategory].push({ name: espressoMenuName });
         store.setLocalStorage(this.menu); //상태가 변하는 시졈에 localStorage에 데이터를 저장한다.
         render();
         $('#espresso-menu-name').value = '';
@@ -76,7 +83,7 @@ function App(){
         const menuId = e.target.closest('li').dataset.menuId;
         const $menuName = e.target.closest('li').querySelector('.menu-name');
         const updateedMenuName = prompt('메뉴명을 수정하세요', $menuName.innerText);
-        this.menu[menuId].name = updateedMenuName; //기존에 있던 this.menu 배열에 수정하여 저장한다.
+        this.menu[this.currentCategory][menuId].name = updateedMenuName; //기존에 있던 this.menu 배열에 수정하여 저장한다.
         store.setLocalStorage(this.menu); //그리고 다시 localStorage에 데어터를 저장한다.
         $menuName.innerText = updateedMenuName;
     };
@@ -84,7 +91,7 @@ function App(){
     const removeMenuName = (e) => {
         if(confirm('정말 삭제하시겠습니까?')){
             const menuId = e.target.closest('li').dataset.menuId;
-            this.menu.splice(menuId, 1);
+            this.menu[this.currentCategory].splice(menuId, 1);
             store.setLocalStorage(this.menu);
             e.target.closest('li').remove();
             updateMenuCount();
@@ -112,9 +119,17 @@ function App(){
 
     $('#espresso-menu-submit-button').addEventListener('click', addMenuName);
 
+    $('nav').addEventListener('click', (e) => {
+        const isCategoryButton = e.target.classList.contains('cafe-category-name');
+        const categoryName = isCategoryButton && e.target.dataset.categoryName;
+        console.log(categoryName)
+    });
+
     this.init = () => {
-        this.menu = store.getLocalStorage() ?? new Array();
-        render();
+        if(store.getLocalStorage()){
+            this.menu = store.getLocalStorage()
+            render();
+        }
     };
 }
 const app = new App();
